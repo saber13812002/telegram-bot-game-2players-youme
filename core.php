@@ -187,17 +187,16 @@ class CORE
         $question = $this->getNextQuestion($telegram, $sql, $bot_token, $partner_id);
 
         if ($question) {
-            // $rp = "partner_id :".$partner_id;
-            // $this->sendMsg($telegram, $rp, $bot_token, $chat_id);
+            if (!$r) {
+                $q = "select * from partner where id = '$partner_id' order by id desc Limit 1 ";
+                $sql->query($q);
+                $row = mysqli_fetch_assoc($sql->get_result());
+                $step = $row['step'];
+                $partner_chat_id = $row['chat_id_2'];
 
-            $q = "select * from partner where id = '$partner_id' order by id desc Limit 1 ";
-            $sql->query($q);
-            $row = mysqli_fetch_assoc($sql->get_result());
-            $step = $row['step'];
-            $partner_chat_id = $row['chat_id_2'];
-
-            if ($row['chat_id_2'] == $telegram->ChatID()) {
-                $partner_chat_id = $row['chat_id_1'];
+                if ($row['chat_id_2'] == $telegram->ChatID()) {
+                    $partner_chat_id = $row['chat_id_1'];
+                }
             }
             // $rp = "partner_chat_id :".$partner_chat_id;
             // $this->sendMsg($telegram, $rp, $bot_token, $chat_id);
@@ -206,8 +205,13 @@ class CORE
             $this->sendMsg($telegram, $question, $bot_token, $chat_id);
             $this->keyboard($telegram, $sql, $bot_token, $chat_id);
             //2
-            $this->sendMsg($telegram, $question, $bot_token, $partner_chat_id);
-            $this->keyboard($telegram, $sql, $bot_token, $partner_chat_id);
+            if (!$r) {
+                $this->sendMsg($telegram, $question, $bot_token, $partner_chat_id);
+                $this->keyboard($telegram, $sql, $bot_token, $partner_chat_id);
+            } else {
+                $this->sendMsg($telegram, $question, $bot_token, $r);
+                $this->keyboard($telegram, $sql, $bot_token, $r);
+            }
             return true;
         } else
             return false;
