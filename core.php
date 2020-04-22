@@ -108,6 +108,7 @@ class CORE
                 } else {
                     // $this->sendMsg($telegram, $number_of_rows . " else  " . $reply, $bot_token, $chat_id);
                     $this->sendMsg($telegram, " باید یار شما هم جواب بده " . $reply, $bot_token, $chat_id);
+                    $telegram->buildKeyBoardHide(true);
                 }
             }
         }
