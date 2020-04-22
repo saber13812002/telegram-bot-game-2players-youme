@@ -2065,6 +2065,8 @@ class Telegram
             'one_time_keyboard' => $onetime,
             'resize_keyboard'   => $resize,
             'selective'         => $selective,
+	    'resize_keyboard'   => true,
+	    'hide_keyboard'     => true,
         ];
         $encodedMarkup = json_encode($replyMarkup, true);
 
