@@ -5,7 +5,7 @@ require '../Telegram.php';
 require  'db.php';
 $sql = new DB();
 
-$bot_token = '1180039785:AAGzRT0JK49RrU092acHEFklcWY3flPGY4I';
+$bot_token = '1180039785:----------------------------------';
 $telegram = new Telegram($bot_token);
 
 $query = "SELECT chat_id,chat_username, MAX(timestamp)
