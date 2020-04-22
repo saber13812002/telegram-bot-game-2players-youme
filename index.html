@@ -1,0 +1,81 @@
+<table>
+ <tr>
+ <td><strong>Parameters</strong></td>
+ <td><strong>Type</strong></td>
+ <td><strong>Required</strong></td>
+ <td><strong>Description</strong></td>
+ </tr>
+ <tr>
+ <td>chat_id</td>
+ <td>Integer</td>
+ <td>Yes</td>
+ <td>Unique identifier for the message recipient — User or GroupChat id</td>
+ </tr>
+ <tr>
+ <td>sticker</td>
+ <td><a href="https://core.telegram.org/bots/api#inputfile">InputFile</a> or String</td>
+ <td>Yes</td>
+ <td>Sticker to send. You can either pass a <em>file_id</em> as String to resend a sticker that is already on the Telegram servers, or upload a new sticker using <strong>multipart/form-data</strong>.</td>
+ </tr>
+ <tr>
+ <td>reply_to_message_id</td>
+ <td>Integer</td>
+ <td>Optional</td>
+ <td>If the message is a reply, ID of the original message</td>
+ </tr>
+ <tr>
+ <td>reply_markup</td>
+ <td>ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply</td>
+ <td>Optional</td>
+ <td>Additional interface options. A JSON-serialized object for a custom reply keyboard, instructions to hide keyboard or to force a reply from the user.</td>
+ </tr>
+ </table>
+
+ <br/>
+ 
+ Use this method to send text messages.<br/>Values inside $content:<br/>
+ <table>
+ <tr>
+ <td><strong>Parameters</strong></td>
+ <td><strong>Type</strong></td>
+ <td><strong>Required</strong></td>
+ <td><strong>Description</strong></td>
+ </tr>
+ <tr>
+ <td>chat_id</td>
+ <td>Integer</td>
+ <td>Yes</td>
+ <td>Unique identifier for the target chat or username of the target channel (in the format \c \@channelusername)</td>
+ </tr>
+ <tr>
+ <td>text</td>
+ <td>String</td>
+ <td>Yes</td>
+ <td>Text of the message to be sent</td>
+ </tr>
+ <tr>
+ <td>parse_mode</td>
+ <td>String</td>
+ <td>Optional</td>
+ <td>Send <em>Markdown</em>, if you want Telegram apps to show bold, italic and inline URLs in your bot's message. For the moment, only Telegram for Android supports this.</td>
+ </tr>
+ <tr>
+ <td>disable_web_page_preview</td>
+ <td>Boolean</td>
+ <td>Optional</td>
+ <td>Disables link previews for links in this message</td>
+ </tr>
+ <tr>
+ <td>reply_to_message_id</td>
+ <td>Integer</td>
+ <td>Optional</td>
+ <td>If the message is a reply, ID of the original message</td>
+ </tr>
+ <tr>
+ <td>reply_markup</td>
+ <td>InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply</td>
+ <td>Optional</td>
+ <td>Additional interface options. A JSON-serialized object for a custom reply keyboard, instructions to hide keyboard or to force a reply from the user.</td>
+ </tr>
+ </table>
+

@@ -107,8 +107,18 @@ class CORE
                     }
                 } else {
                     // $this->sendMsg($telegram, $number_of_rows . " else  " . $reply, $bot_token, $chat_id);
+                    
+                    
                     $this->sendMsg($telegram, " باید یار شما هم جواب بده " . $reply, $bot_token, $chat_id);
-                    $telegram->buildKeyBoardHide(true);
+                    //$this->sendMsgHideKeyBoard($telegram, " باید یار شما هم جواب بده " . $reply, $bot_token, $chat_id);
+                    
+                    
+                    //$telegram->buildKeyBoardHide(true);
+
+                    //https://www.gstatic.com/webp/gallery/4.webp
+                    // $stk = "https://www.gstatic.com/webp/gallery3/1_webp_a.png";
+                    // $content = ['chat_id' => $chat_id, 'sticker' => $stk];
+                    // $telegram->sendSticker($content);
                 }
             }
         }
@@ -284,6 +294,19 @@ class CORE
     function sendMsg($telegram, $message, $bot_token, $chat_id_)
     {
         $content = array('chat_id' => $chat_id_, 'text' => $message);
+        $telegram->sendMessage($content);
+        return true;
+    }
+
+    //reply_markup reply_markup	InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardHide or ForceReply	Optional	Additional interface options. A JSON-serialized object for a custom reply keyboard, instructions to hide keyboard or to force a reply from the user.
+    function sendMsgHideKeyBoard($telegram, $message, $bot_token, $chat_id_)
+    {
+        $replyMarkup = [
+            //'hide_keyboard'     => true,
+            //'ReplyKeyboardHide'     => true,
+            'ReplyKeyboardHide'
+        ];
+        $content = array('chat_id' => $chat_id_, 'text' => $message, 'reply_markup'=> $replyMarkup);
         $telegram->sendMessage($content);
         return true;
     }
