@@ -1,4 +1,4 @@
-# telegram-bot-game-2players-youme
+# telegram-bot-game-2players-you-me
 بازی تلگرامی دونفره در زمان کورونا که بین همسران برای شناخت بیشتر میتونه برگزار بشه
 
 # How to use
