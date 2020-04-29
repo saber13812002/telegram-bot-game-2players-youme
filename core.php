@@ -27,6 +27,7 @@ class CORE
 
 
         $cmd = substr($text, 0, 6);
+        $cmdAdd = substr($text, 0, 4);
         if ($text == '/start') {
             $reply = 'https://t.me/hamsaraanbot?start=' . $chat_id;
             $this->sendMsg($telegram, "لینک دعوت زیر رو بفرستید برای همسرتون و ازش بخواهید روبات استارت کنه و برگردید روبات بازی رو شروع کنید  : " . $reply, $bot_token, $chat_id);
@@ -44,6 +45,16 @@ class CORE
                 $this->setState($telegram, $sql, $r, $chat_id, $new);
                 $this->question($telegram, $sql, $bot_token, $r);
             }
+        } else if ($cmdAdd == '/add') {
+            if ($chat_id == 151370482 || $chat_id == 676098801  || $chat_id == 84694767) {
+                $q_id = substr($text, 4, strlen($text));
+                $query = "UPDATE `questions` SET `status` = 'Publish' WHERE id = '$q_id' ";
+                $sql->query($query);
+                $msg = "تایید شد
+" . " : /remove" . $q_id;
+                $this->sendToAdmins($telegram, $sql, $bot_token, $chat_id, $msg);
+            } else
+                $this->sendMsg($telegram, "شما ادمین نیستید", $bot_token, $chat_id);
         } else {
             if ($text == 'من' || $text == 'او') {
                 //get partnerid with States
@@ -107,12 +118,12 @@ class CORE
                     }
                 } else {
                     // $this->sendMsg($telegram, $number_of_rows . " else  " . $reply, $bot_token, $chat_id);
-                    
-                    
+
+
                     $this->sendMsg($telegram, " باید یار شما هم جواب بده " . $reply, $bot_token, $chat_id);
                     //$this->sendMsgHideKeyBoard($telegram, " باید یار شما هم جواب بده " . $reply, $bot_token, $chat_id);
-                    
-                    
+
+
                     //$telegram->buildKeyBoardHide(true);
 
                     //https://www.gstatic.com/webp/gallery/4.webp
@@ -120,8 +131,45 @@ class CORE
                     // $content = ['chat_id' => $chat_id, 'sticker' => $stk];
                     // $telegram->sendSticker($content);
                 }
+            } else {
+                $this->saveQuestion($telegram, $sql, $bot_token, $chat_id, $text);
+                $this->sendToAdmin($telegram, $sql, $bot_token, $chat_id, $text);
             }
         }
+    }
+
+    function saveQuestion($telegram, $sql, $bot_token, $chat_id, $text)
+    {
+        //add
+        $inserted = 0;
+        $inserted2 = 0;
+        $chat_id_test = $chat_id . "";
+        $query_insert = "INSERT INTO `questions` (`q`, `status`, `chat_id`) VALUES ('$text', 'Draft', '$chat_id_test');";
+        if ($sql->query($query_insert)) {
+            $inserted = 1;
+            $inserted2 = $sql->insert_id;
+        }
+        //fetch id
+    }
+    function sendToAdmin($telegram, $sql, $bot_token, $chat_id, $text)
+    {
+        $selected = 0;
+        $query_selected = "SELECT * FROM questions  ORDER BY id DESC Limit 1";
+        $sql->query($query_selected);
+        $row = mysqli_fetch_assoc($sql->get_result());
+        $selected = $row['id'];
+
+        $this->sendMsg($telegram, "سوال شما دریافت شد", $bot_token, $chat_id);
+        $msg = "
+" . " : /add" . $selected;
+        $this->sendToAdmins($telegram, $sql, $bot_token, $chat_id, $msg);
+    }
+
+    function sendToAdmins($telegram, $sql, $bot_token, $chat_id, $msg)
+    {
+        $this->sendMsg($telegram, $msg, $bot_token, 84694767);
+        $this->sendMsg($telegram, $msg, $bot_token, 676098801);
+        $this->sendMsg($telegram, $msg, $bot_token, 151370482);
     }
 
     function getTodaysCountLog()
@@ -285,7 +333,7 @@ class CORE
 
     function getQuestion($telegram, $sql, $bot_token, $step)
     {
-        $query_next_question = "select * from questions where id = (select min(id) from questions where id > '$step')";
+        $query_next_question = "select * from questions where id = (select min(id) from questions where id > '$step') and status = 'Publish'";
         $sql->query($query_next_question);
         $row = mysqli_fetch_assoc($sql->get_result());
         return $row;
@@ -306,7 +354,7 @@ class CORE
             //'ReplyKeyboardHide'     => true,
             'ReplyKeyboardHide'
         ];
-        $content = array('chat_id' => $chat_id_, 'text' => $message, 'reply_markup'=> $replyMarkup);
+        $content = array('chat_id' => $chat_id_, 'text' => $message, 'reply_markup' => $replyMarkup);
         $telegram->sendMessage($content);
         return true;
     }
