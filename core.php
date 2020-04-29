@@ -131,11 +131,56 @@ class CORE
                     // $content = ['chat_id' => $chat_id, 'sticker' => $stk];
                     // $telegram->sendSticker($content);
                 }
+            } else if ($text == "/result") {
+                $this->getResult($telegram, $sql, $bot_token, $chat_id, $text);
             } else {
                 $this->saveQuestion($telegram, $sql, $bot_token, $chat_id, $text);
                 $this->sendToAdmin($telegram, $sql, $bot_token, $chat_id, $text);
             }
         }
+    }
+
+    function getResult($telegram, $sql, $bot_token, $chat_id, $text)
+    {
+        $this->sendMsg($telegram, " نتایج برای شما ارسال خواهد شد", $bot_token, $chat_id);
+        $partner_id = $this->getPartnerIdFromState($telegram, $sql);
+        // $this->sendMsg($telegram, "id: " . $partner_id, $bot_token, $chat_id);
+        $answer = $this->getAnswerByPartnerId($telegram, $sql, $partner_id, $bot_token, $chat_id);
+        if ($answer == "")
+            $this->sendMsg($telegram, "نتایجی برای شما پیدا نشد", $bot_token, $chat_id);
+        else {
+            $this->sendMsg($telegram, $answer, $bot_token, $chat_id);
+            $this->sendToAdmins($telegram, $sql, $bot_token, $chat_id, $answer);
+        }
+    }
+
+    function getAnswerByPartnerId($telegram, $sql, $partner_id, $bot_token, $chat_id)
+    {
+        //select all rows in answer table by partner id
+        $answer = "";
+        $moshtarak = 0;
+        $ekhtelaf = 0;
+        $qqq = "select * from answers where partner_id = '$partner_id';";
+        $sql->query($qqq);
+        $number_of_rows = $sql->get_num_rows();
+        if (strlen($number_of_rows) > 0) {
+            while ($r = mysqli_fetch_assoc($sql->get_result())) {
+                //$this->sendMsg($telegram, $r["answer_1"] . " - " . $r["answer_2"], $bot_token, $chat_id);
+                if ($r["answer_1"] != $r["answer_2"]) {
+                    $moshtarak++;
+                } else {
+                    $ekhtelaf++;
+                }
+            }
+            $answer = "شما از " .
+                $number_of_rows .
+                "مورد سوال در " .
+                $moshtarak .
+                " هم نظر بودید";
+
+            return $answer;
+        } else
+            return "";
     }
 
     function saveQuestion($telegram, $sql, $bot_token, $chat_id, $text)
@@ -160,7 +205,7 @@ class CORE
         $selected = $row['id'];
 
         $this->sendMsg($telegram, "سوال شما دریافت شد", $bot_token, $chat_id);
-        $msg = "
+        $msg = $text . "
 " . " : /add" . $selected;
         $this->sendToAdmins($telegram, $sql, $bot_token, $chat_id, $msg);
     }
@@ -296,8 +341,8 @@ class CORE
     function getPartnerIdFromState($telegram, $sql)
     {
         $chat_id = $telegram->ChatID();
-        $query_next_question = "select * from states where chat_id = '$chat_id' order by created desc Limit 1 ";
-        $sql->query($query_next_question);
+        $query_last_partner_in_state_table = "select * from states where chat_id = '$chat_id' order by created desc Limit 1 ";
+        $sql->query($query_last_partner_in_state_table);
 
         $row = mysqli_fetch_assoc($sql->get_result());
         return $row['partner_id'];
